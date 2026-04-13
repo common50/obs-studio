@@ -10,9 +10,9 @@ OBSBasicControls::OBSBasicControls(OBSBasic *main) : QFrame(nullptr), ui(new Ui:
 	ui->setupUi(this);
 
 	streamButtonMenu.reset(new QMenu());
-	startStreamAction = streamButtonMenu->addAction(QTStr("Basic.Main.StartStreaming"));
-	stopStreamAction = streamButtonMenu->addAction(QTStr("Basic.Main.StopStreaming"));
-	QAction *forceStopStreamAction = streamButtonMenu->addAction(QTStr("Basic.Main.ForceStopStreaming"));
+	startStreamAction = streamButtonMenu->addAction(tr("stream start btn 🤑🤑🤑"));
+	stopStreamAction = streamButtonMenu->addAction(tr("stream stop button 😢😢😢"));
+	QAction *forceStopStreamAction = streamButtonMenu->addAction(tr("ANGRY STREAM STOP BUTTON 😡😡😡"));
 
 	/* Transfer buttons signals as OBSBasicControls signals */
 	connect(
@@ -100,18 +100,18 @@ OBSBasicControls::OBSBasicControls(OBSBasic *main) : QFrame(nullptr), ui(new Ui:
 void OBSBasicControls::StreamingPreparing()
 {
 	ui->streamButton->setEnabled(false);
-	ui->streamButton->setText(QTStr("Basic.Main.PreparingStream"));
+	ui->streamButton->setText(tr("yesss preparing the stream, almost there..."));
 }
 
 void OBSBasicControls::StreamingStarting(bool broadcastAutoStart)
 {
-	ui->streamButton->setText(QTStr("Basic.Main.Connecting"));
+	ui->streamButton->setText(tr("STARTING STREAM OMG OMG"));
 
 	if (!broadcastAutoStart) {
 		// well, we need to disable button while stream is not active
 		ui->broadcastButton->setEnabled(false);
 
-		ui->broadcastButton->setText(QTStr("Basic.Main.StartBroadcast"));
+		ui->broadcastButton->setText(tr("YESSS BROADCAST IS READY, CLICK TO START"));
 
 		ui->broadcastButton->setProperty("broadcastState", "ready");
 		ui->broadcastButton->style()->unpolish(ui->broadcastButton);
@@ -123,7 +123,7 @@ void OBSBasicControls::StreamingStarted(bool withDelay)
 {
 	ui->streamButton->setEnabled(true);
 	setClasses(ui->streamButton, "state-active");
-	ui->streamButton->setText(QTStr("Basic.Main.StopStreaming"));
+	ui->streamButton->setText(tr("stop stream noo 😭"));
 
 	if (withDelay) {
 		ui->streamButton->setMenu(streamButtonMenu.get());
@@ -134,14 +134,14 @@ void OBSBasicControls::StreamingStarted(bool withDelay)
 
 void OBSBasicControls::StreamingStopping()
 {
-	ui->streamButton->setText(QTStr("Basic.Main.StoppingStreaming"));
+	ui->streamButton->setText(tr("alrigth alrigth stopping the stream, see you later..."));
 }
 
 void OBSBasicControls::StreamingStopped(bool withDelay)
 {
 	ui->streamButton->setEnabled(true);
 	setClasses(ui->streamButton, "");
-	ui->streamButton->setText(QTStr("Basic.Main.StartStreaming"));
+	ui->streamButton->setText(tr("start stream pls 🥺"));
 
 	if (withDelay) {
 		if (!ui->streamButton->menu())
@@ -166,7 +166,7 @@ void OBSBasicControls::BroadcastStreamActive()
 
 void OBSBasicControls::BroadcastStreamStarted(bool autoStop)
 {
-	ui->broadcastButton->setText(QTStr(autoStop ? "Basic.Main.AutoStopEnabled" : "Basic.Main.StopBroadcast"));
+	ui->broadcastButton->setText(tr(autoStop ? "WATCH OUT BROADCAST AUTO STOP ENABLED" : "BROADCAST STOP ENABLED 😨😨😨"));
 	if (autoStop)
 		ui->broadcastButton->setEnabled(false);
 
@@ -178,7 +178,7 @@ void OBSBasicControls::BroadcastStreamStarted(bool autoStop)
 void OBSBasicControls::RecordingStarted(bool pausable)
 {
 	setClasses(ui->recordButton, "state-active");
-	ui->recordButton->setText(QTStr("Basic.Main.StopRecording"));
+	ui->recordButton->setText(tr("stop recording noo 😭"));
 
 	if (pausable) {
 		ui->pauseRecordButton->setVisible(pausable);
@@ -210,13 +210,13 @@ void OBSBasicControls::RecordingUnpaused()
 
 void OBSBasicControls::RecordingStopping()
 {
-	ui->recordButton->setText(QTStr("Basic.Main.StoppingRecording"));
+	ui->recordButton->setText(tr("Stopping recording 😔 (btw this is like the WORST recording ever)"));
 }
 
 void OBSBasicControls::RecordingStopped()
 {
 	setClasses(ui->recordButton, "");
-	ui->recordButton->setText(QTStr("Basic.Main.StartRecording"));
+	ui->recordButton->setText(tr("star recording pls 🥺"));
 
 	ui->pauseRecordButton->setVisible(false);
 }
@@ -224,20 +224,20 @@ void OBSBasicControls::RecordingStopped()
 void OBSBasicControls::ReplayBufferStarted()
 {
 	setClasses(ui->replayBufferButton, "state-active");
-	ui->replayBufferButton->setText(QTStr("Basic.Main.StopReplayBuffer"));
+	ui->replayBufferButton->setText(tr("stop replay buffer noo 😭"));
 
 	ui->saveReplayButton->setVisible(true);
 }
 
 void OBSBasicControls::ReplayBufferStopping()
 {
-	ui->replayBufferButton->setText(QTStr("Basic.Main.StoppingReplayBuffer"));
+	ui->replayBufferButton->setText(tr("Stopping replay buffer 😔"));
 }
 
 void OBSBasicControls::ReplayBufferStopped()
 {
 	setClasses(ui->replayBufferButton, "");
-	ui->replayBufferButton->setText(QTStr("Basic.Main.StartReplayBuffer"));
+	ui->replayBufferButton->setText(tr("Start replay buffer 🥺"));
 
 	ui->saveReplayButton->setVisible(false);
 }
@@ -245,13 +245,13 @@ void OBSBasicControls::ReplayBufferStopped()
 void OBSBasicControls::VirtualCamStarted()
 {
 	setClasses(ui->virtualCamButton, "state-active");
-	ui->virtualCamButton->setText(QTStr("Basic.Main.StopVirtualCam"));
+	ui->virtualCamButton->setText(tr("stop virtual camera noo 😭"));
 }
 
 void OBSBasicControls::VirtualCamStopped()
 {
 	setClasses(ui->virtualCamButton, "");
-	ui->virtualCamButton->setText(QTStr("Basic.Main.StartVirtualCam"));
+	ui->virtualCamButton->setText(tr("Start virtual camera 🤑🤑🤑"));
 }
 
 void OBSBasicControls::UpdateStudioModeState(bool enabled)
@@ -264,7 +264,7 @@ void OBSBasicControls::EnableBroadcastFlow(bool enabled)
 	ui->broadcastButton->setVisible(enabled);
 	ui->broadcastButton->setEnabled(enabled);
 
-	ui->broadcastButton->setText(QTStr("Basic.Main.SetupBroadcast"));
+	ui->broadcastButton->setText(tr("setup broadcast flow 🤑🤑🤑"));
 
 	ui->broadcastButton->setProperty("broadcastState", "idle");
 	ui->broadcastButton->style()->unpolish(ui->broadcastButton);

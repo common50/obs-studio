@@ -283,7 +283,7 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	OBSBasicControls *controls = new OBSBasicControls(this);
 	controlsDock = new OBSDock(this);
 	controlsDock->setObjectName(QString::fromUtf8("controlsDock"));
-	controlsDock->setWindowTitle(QTStr("Basic.Main.Controls"));
+	controlsDock->setWindowTitle(tr("control thingy good luck figuring out how this works"));
 	/* Parenting is done there so controls will be deleted alongside controlsDock */
 	controlsDock->setWidget(controls);
 
@@ -359,7 +359,7 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	statsDock->setObjectName(QStringLiteral("statsDock"));
 	statsDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable |
 			       QDockWidget::DockWidgetFloatable);
-	statsDock->setWindowTitle(QTStr("Basic.Stats"));
+	statsDock->setWindowTitle(tr("$EDITTHIS, stats panel dock title, Stats"));
 	addDockWidget(Qt::BottomDockWidgetArea, statsDock);
 	statsDock->setVisible(false);
 	statsDock->setFloating(true);
