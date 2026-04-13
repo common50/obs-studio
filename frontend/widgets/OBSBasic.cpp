@@ -359,7 +359,7 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	statsDock->setObjectName(QStringLiteral("statsDock"));
 	statsDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable |
 			       QDockWidget::DockWidgetFloatable);
-	statsDock->setWindowTitle(tr("$EDITTHIS, stats panel dock title, Stats"));
+	statsDock->setWindowTitle(tr("super cool stats dock that is very useful and not at all a dumping ground for random stats that don't have anywhere else to go"));
 	addDockWidget(Qt::BottomDockWidgetArea, statsDock);
 	statsDock->setVisible(false);
 	statsDock->setFloating(true);
