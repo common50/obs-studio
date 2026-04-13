@@ -10,7 +10,7 @@ OBSBasicControls::OBSBasicControls(OBSBasic *main) : QFrame(nullptr), ui(new Ui:
 	ui->setupUi(this);
 
 	streamButtonMenu.reset(new QMenu());
-	startStreamAction = streamButtonMenu->addAction(tr("stream start btn 🤑🤑🤑"));
+	startStreamAction = streamButtonMenu->addAction(tr("stream start button 🤑🤑🤑"));
 	stopStreamAction = streamButtonMenu->addAction(tr("stream stop button 😢😢😢"));
 	QAction *forceStopStreamAction = streamButtonMenu->addAction(tr("ANGRY STREAM STOP BUTTON 😡😡😡"));
 
