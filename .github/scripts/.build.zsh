@@ -194,10 +194,14 @@ build() {
       if (( analyze )) {
         run_xcodebuild ${analyze_args}
       } else {
-        if [[ ${GITHUB_EVENT_NAME} == push && ${GITHUB_REF_NAME} =~ [0-9]+.[0-9]+.[0-9]+(-(rc|beta).+)? ]] {
+        if [[ ${GITHUB_EVENT_NAME} == push && ${GITHUB_REF_NAME} =~ [0-9]+.[0-9]+.[0-9]+(-(rc|beta).+)? ]] && { (( codesign )) || [[ -n ${CODESIGN_TEAM} ]]; } {
           run_xcodebuild ${archive_args}
           run_xcodebuild ${export_args}
         } else {
+          if [[ ${GITHUB_EVENT_NAME} == push && ${GITHUB_REF_NAME} =~ [0-9]+.[0-9]+.[0-9]+(-(rc|beta).+)? ]] {
+            print '::warning::Skipping Xcode archive/export since no signing team ID is configured; building app bundle instead.'
+          }
+
           run_xcodebuild ${build_args}
 
           rm -rf OBS.app
