@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QGroupBox>
 #include <QPixmap>
+#include <QRegularExpression>
 #include <QSizePolicy>
 #include "moc_OBSGroqChat.cpp"
 
@@ -150,8 +151,8 @@ void OBSGroqChat::LoadApiKey()
 void OBSGroqChat::SaveApiKey()
 {
 	QString key = apiKeyInput->text().trimmed();
-	config_set_string(App()->GetUserConfig(), "GroqChat", "ApiKey", QT_UTF8(key));
-	config_save(App()->GetUserConfig());
+	config_set_string(App()->GetUserConfig(), "GroqChat", "ApiKey", QT_UTF8(key.toUtf8().constData()));
+	config_save_safe(App()->GetUserConfig(), "tmp", nullptr);
 	SetApiKeyState();
 }
 
@@ -224,7 +225,7 @@ void OBSGroqChat::SendMessage()
 	body["model"]    = "llama3-70b-8192";
 	body["messages"] = messages;
 
-	QNetworkRequest req(QUrl(groqUrl));
+	QNetworkRequest req{QUrl(groqUrl)};
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	req.setRawHeader("Authorization", QString("Bearer %1").arg(key).toUtf8());
 	net->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
@@ -310,7 +311,7 @@ void OBSGroqChat::DetectEmotion(const QString &text)
 		QJsonObject{{"role", "user"}, {"content", prompt}}
 	};
 
-	QNetworkRequest req(QUrl(groqUrl));
+	QNetworkRequest req{QUrl(groqUrl)};
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	req.setRawHeader("Authorization", QString("Bearer %1").arg(key).toUtf8());
 	emotionNet->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
