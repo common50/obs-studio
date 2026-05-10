@@ -151,7 +151,7 @@ void OBSGroqChat::LoadApiKey()
 void OBSGroqChat::SaveApiKey()
 {
 	QString key = apiKeyInput->text().trimmed();
-	config_set_string(App()->GetUserConfig(), "GroqChat", "ApiKey", QT_UTF8(key.toUtf8().constData()));
+	config_set_string(App()->GetUserConfig(), "GroqChat", "ApiKey", key.toUtf8().constData());
 	config_save_safe(App()->GetUserConfig(), "tmp", nullptr);
 	SetApiKeyState();
 }
