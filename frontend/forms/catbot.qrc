@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/catbot">
+        <file alias="angry.jpg">cat_images/angry.jpg</file>
+        <file alias="weary.jpg">cat_images/weary.jpg</file>
+        <file alias="sleepy.jpg">cat_images/sleepy.jpg</file>
+        <file alias="sad.jpg">cat_images/sad.jpg</file>
+        <file alias="curious.jpg">cat_images/curious.jpg</file>
+    </qresource>
+</RCC>

@@ -37,6 +37,7 @@
 #include <dialogs/OBSBasicInteraction.hpp>
 #include <dialogs/OBSBasicProperties.hpp>
 #include <dialogs/OBSBasicTransform.hpp>
+#include <dialogs/OBSGroqChat.hpp>
 #include <models/SceneCollection.hpp>
 #include <settings/OBSBasicSettings.hpp>
 #include <utility/QuickTransition.hpp>
@@ -496,6 +497,18 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 #ifndef ENABLE_IDIAN_PLAYGROUND
 	ui->idianPlayground->setVisible(false);
 #endif
+
+	QAction *groqChatAction = new QAction(tr("OBS-CatBot 🐱..."), this);
+	ui->menuTools->insertAction(ui->autoConfigure, groqChatAction);
+	connect(groqChatAction, &QAction::triggered, this, [this]() {
+		static QPointer<OBSGroqChat> chat;
+		if (!chat) {
+			chat = new OBSGroqChat(this);
+		}
+		chat->show();
+		chat->raise();
+		chat->activateWindow();
+	});
 
 	auto addNudge = [this](const QKeySequence &seq, MoveDir direction, int distance) {
 		QAction *nudge = new QAction(ui->preview);
@@ -2092,9 +2105,7 @@ void OBSBasic::UpdateTitleBar()
 	const char *profile = config_get_string(App()->GetUserConfig(), "Basic", "Profile");
 	const char *sceneCollection = config_get_string(App()->GetUserConfig(), "Basic", "SceneCollection");
 
-	name << "OBS ";
-	if (previewProgramMode)
-		name << "Studio ";
+	name << "OBSENTIAL ";							      
 
 	name << App()->GetVersionString(false);
 	if (safe_mode)

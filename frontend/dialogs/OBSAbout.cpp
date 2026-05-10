@@ -30,6 +30,8 @@ OBSAbout::OBSAbout(QWidget *parent) : QDialog(parent), ui(new Ui::OBSAbout)
 
 	ui->version->setText(ver + bitness);
 
+	ui->name->setText("OBSENTIAL");
+
 	ui->contribute->setText(QTStr("About.Contribute"));
 
 	if (steam) {

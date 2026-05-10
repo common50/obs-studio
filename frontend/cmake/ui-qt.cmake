@@ -51,6 +51,7 @@ target_sources(
     forms/StatusBarWidget.ui
     forms/PluginManagerWindow.ui
     forms/obs.qrc
+    forms/catbot.qrc
     forms/source-toolbar/browser-source-toolbar.ui
     forms/source-toolbar/color-source-toolbar.ui
     forms/source-toolbar/device-select-toolbar.ui
