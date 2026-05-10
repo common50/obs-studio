@@ -132,8 +132,8 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 
 	mainLayout->addLayout(inputRow);
 
-	connect(sendButton,   &QPushButton::clicked,       this, &OBSGroqChat::SendMessage);
-	connect(messageInput, &QLineEdit::returnPressed,   this, &OBSGroqChat::SendMessage);
+	connect(sendButton,   &QPushButton::clicked,       this, &OBSGroqChat::SendChatMessage);
+	connect(messageInput, &QLineEdit::returnPressed,   this, &OBSGroqChat::SendChatMessage);
 }
 
 OBSGroqChat::~OBSGroqChat() {}
@@ -191,7 +191,7 @@ void OBSGroqChat::SetCatEmotion(const QString &emotion)
 // ---------------------------------------------------------------------------
 // Send chat message
 // ---------------------------------------------------------------------------
-void OBSGroqChat::SendMessage()
+void OBSGroqChat::SendChatMessage()
 {
 	QString msg = messageInput->text().trimmed();
 	if (msg.isEmpty())

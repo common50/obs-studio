@@ -24,7 +24,7 @@ public:
 	~OBSGroqChat();
 
 private:
-	void SendMessage();
+	void SendChatMessage();
 	void OnReply(QNetworkReply *reply);
 	void LoadApiKey();
 	void SaveApiKey();
