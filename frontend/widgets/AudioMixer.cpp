@@ -147,8 +147,8 @@ AudioMixer::AudioMixer(QWidget *parent) : QFrame(parent)
 	mainLayout->addWidget(mixerToolbar);
 
 	advAudio = new QAction(this);
-	advAudio->setText(QTStr("Basic.AdvAudio"));
-	advAudio->setToolTip(QTStr("Basic.AdvAudio"));
+	advAudio->setText(tr("Adv Audio (no no dont touch)"));
+	advAudio->setToolTip(tr("Advanced Audio Properties (no no dont touch)"));
 	QIcon advIcon;
 	advIcon.addFile(QString::fromUtf8(":/settings/images/settings/advanced.svg"), QSize(16, 16),
 			QIcon::Mode::Normal, QIcon::State::Off);
@@ -834,7 +834,7 @@ void AudioMixer::createMixerContextMenu()
 		layoutToggleAction->setText(QTStr("Basic.AudioMixer.Layout.Horizontal"));
 	}
 
-	QAction *openAdvancedProperties = new QAction(QTStr("Basic.AdvAudio"), mixerMenu);
+	QAction *openAdvancedProperties = new QAction(tr("Adv Audio (no no dont touch)"), mixerMenu);
 
 	// Connect menu actions
 	connect(unhideAllAction, &QAction::triggered, this, &AudioMixer::unhideAllAudioControls, Qt::DirectConnection);

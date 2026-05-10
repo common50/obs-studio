@@ -39,6 +39,7 @@ OBSBasicControls::OBSBasicControls(OBSBasic *main) : QFrame(nullptr), ui(new Ui:
 	connect(
 		ui->virtualCamConfigButton, &QPushButton::clicked, this,
 		[this]() { emit this->VirtualCamConfigButtonClicked(); }, Qt::DirectConnection);
+	ui->modeSwitch->setText(tr("Studio Mode (fancy mode)"));
 	connect(
 		ui->modeSwitch, &QPushButton::clicked, this, [this]() { emit this->StudioModeButtonClicked(); },
 		Qt::DirectConnection);

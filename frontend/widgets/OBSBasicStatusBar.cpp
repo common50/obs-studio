@@ -117,7 +117,7 @@ void OBSBasicStatusBar::Deactivate()
 		delete refreshTimer;
 
 		statusWidget->ui->delayInfo->setText("");
-		statusWidget->ui->droppedFrames->setText(QTStr("DroppedFrames").arg("0", "0.0"));
+		statusWidget->ui->droppedFrames->setText(tr("Dropped Frames (🖕 blame ur internet)"));
 		statusWidget->ui->kbps->setText("0 kbps");
 
 		delaySecTotal = 0;
@@ -315,8 +315,8 @@ void OBSBasicStatusBar::UpdateDroppedFrames()
 	if (!totalFrames)
 		return;
 
-	QString text = QTStr("DroppedFrames");
-	text = text.arg(QString::number(totalDropped), QString::number(percent, 'f', 1));
+	QString text = tr("Dropped %1 frames out of %2 (%3%) (🖕 blame ur internet)");
+	text = text.arg(QString::number(totalDropped), QString::number(totalFrames), QString::number(percent, 'f', 1));
 	statusWidget->ui->droppedFrames->setText(text);
 
 	if (!statusWidget->ui->issuesFrame->isVisible())
@@ -455,9 +455,9 @@ void OBSBasicStatusBar::UpdateStatusBar()
 	double percentage = double(skipped) / double(total) * 100.0;
 
 	if (diff > 10 && percentage >= 0.1f) {
-		showMessage(QTStr("HighResourceUsage"), 4000);
+		showMessage(tr("Encoding overloaded! (ur pc is having a stroke) Consider turning down video settings or using a faster encoding preset."), 4000);
 		if (!main->isVisible() && overloadedNotify) {
-			main->SysTrayNotify(QTStr("HighResourceUsage"), QSystemTrayIcon::Warning);
+			main->SysTrayNotify(tr("Encoding overloaded! (ur pc is having a stroke) Consider turning down video settings or using a faster encoding preset."), QSystemTrayIcon::Warning);
 			overloadedNotify = false;
 		}
 	}

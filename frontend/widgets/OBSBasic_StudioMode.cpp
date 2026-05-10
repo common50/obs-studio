@@ -82,7 +82,7 @@ void OBSBasic::CreateProgramOptions()
 	QPushButton *addQuickTransition = new QPushButton();
 	addQuickTransition->setProperty("class", "icon-plus");
 
-	QLabel *quickTransitionsLabel = new QLabel(QTStr("QuickTransitions"));
+	QLabel *quickTransitionsLabel = new QLabel(tr("Quick Transitions (snappy snappy)"));
 	quickTransitionsLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 	quickTransitionsLayout->addWidget(quickTransitionsLabel);

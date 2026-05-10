@@ -283,7 +283,7 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	OBSBasicControls *controls = new OBSBasicControls(this);
 	controlsDock = new OBSDock(this);
 	controlsDock->setObjectName(QString::fromUtf8("controlsDock"));
-	controlsDock->setWindowTitle(tr("control thingy good luck figuring out how this works"));
+	controlsDock->setWindowTitle(tr("Juicy Buttons"));
 	/* Parenting is done there so controls will be deleted alongside controlsDock */
 	controlsDock->setWidget(controls);
 
@@ -352,6 +352,11 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	int sideDockWidth = std::min(width() * 30 / 100, 320);
 	resizeDocks({ui->scenesDock, ui->sourcesDock}, {sideDockWidth, sideDockWidth}, Qt::Horizontal);
 	addDockWidget(Qt::BottomDockWidgetArea, controlsDock);
+
+	ui->scenesDock->setWindowTitle(tr("Scenes (ur stages)"));
+	ui->sourcesDock->setWindowTitle(tr("Sources (stuff in the stages)"));
+	ui->mixerDock->setWindowTitle(tr("Audio Mixer 🔊🔊🔊"));
+	ui->transitionsDock->setWindowTitle(tr("good luck figuring out how this works"));
 
 	startingDockLayout = saveState();
 
