@@ -1,6 +1,7 @@
 #include "OBSGroqChat.hpp"
 #include <OBSApp.hpp>
 #include <qt-wrappers.hpp>
+#include <QSslSocket>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -25,7 +26,8 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 	setMinimumSize(620, 560);
 	resize(700, 600);
 
-	net        = new QNetworkAccessManager(this);
+	QSslSocket::setActiveBackend("schannel");
+	net       = new QNetworkAccessManager(this);
 	emotionNet = new QNetworkAccessManager(this);
 
 	systemPrompt =
