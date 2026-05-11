@@ -21,7 +21,7 @@
 
 OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 {
-	setWindowTitle(tr("waffles 🐱"));
+	setWindowTitle(tr("waffles"));
 	setModal(false);
 	setMinimumSize(620, 560);
 	resize(700, 600);
@@ -81,10 +81,10 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 	catImageLabel->setFixedSize(150, 150);
 	catImageLabel->setAlignment(Qt::AlignCenter);
 	catImageLabel->setScaledContents(true);
-	catImageLabel->setToolTip(tr("Waffels' current mood"));
+	catImageLabel->setToolTip(tr("waffles' current mood"));
 	catPanel->addWidget(catImageLabel);
 
-	QLabel *nameLabel = new QLabel(tr("Waffels"));
+	QLabel *nameLabel = new QLabel(tr("waffles"));
 	nameLabel->setAlignment(Qt::AlignCenter);
 	nameLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
 	catPanel->addWidget(nameLabel);
@@ -260,7 +260,7 @@ void OBSGroqChat::OnReply(QNetworkReply *reply)
 	if (history.size() > maxHistory)
 		history = history.mid(history.size() - maxHistory);
 
-	chatHistory->append(QString("<p><b>🐱 waffles:</b> %1</p>")
+	chatHistory->append(QString("<p><b>waffles:</b> %1</p>")
 	                    .arg(replyText.toHtmlEscaped().replace("\n", "<br>")));
 
 	SetApiKeyState(); // respects key state rather than blindly re-enabling
