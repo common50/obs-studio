@@ -34,4 +34,13 @@ add_subdirectory(test/test-input)
 
 add_subdirectory(frontend)
 
+if(OS_WINDOWS AND CMAKE_VS_PLATFORM_NAME STREQUAL x64)
+  get_target_property(_qt_core Qt6::Core LOCATION)
+  cmake_path(GET _qt_core PARENT_PATH _qt_bin_dir)
+  set(_tls_dir "${_qt_bin_dir}/../plugins/tls")
+  if(EXISTS "${_tls_dir}")
+    install(DIRECTORY "${_tls_dir}" DESTINATION "bin/64bit")
+  endif()
+endif()
+
 message_configuration()
