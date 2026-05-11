@@ -21,7 +21,7 @@
 
 OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 {
-	setWindowTitle(tr("OBS-CatBot 🐱"));
+	setWindowTitle(tr("waffles 🐱"));
 	setModal(false);
 	setMinimumSize(620, 560);
 	resize(700, 600);
@@ -260,7 +260,7 @@ void OBSGroqChat::OnReply(QNetworkReply *reply)
 	if (history.size() > maxHistory)
 		history = history.mid(history.size() - maxHistory);
 
-	chatHistory->append(QString("<p><b>🐱 CatBot:</b> %1</p>")
+	chatHistory->append(QString("<p><b>🐱 waffles:</b> %1</p>")
 	                    .arg(replyText.toHtmlEscaped().replace("\n", "<br>")));
 
 	SetApiKeyState(); // respects key state rather than blindly re-enabling

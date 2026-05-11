@@ -498,7 +498,7 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	ui->idianPlayground->setVisible(false);
 #endif
 
-	QAction *groqChatAction = new QAction(tr("OBS-CatBot 🐱..."), this);
+	QAction *groqChatAction = new QAction(tr("waffles 🐱..."), this);
 	ui->menuTools->insertAction(ui->autoConfigure, groqChatAction);
 	connect(groqChatAction, &QAction::triggered, this, [this]() {
 		static QPointer<OBSGroqChat> chat;
