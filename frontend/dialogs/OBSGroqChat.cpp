@@ -14,11 +14,10 @@
 #include <QPixmap>
 #include <QRegularExpression>
 #include <QSizePolicy>
+// NOTE: Remove this include if your build system uses CMake AUTOMOC.
+// Keeping it here only for manual-moc builds.
 #include "moc_OBSGroqChat.cpp"
 
-// ---------------------------------------------------------------------------
-// Constructor
-// ---------------------------------------------------------------------------
 OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 {
 	setWindowTitle(tr("OBS-CatBot 🐱"));
@@ -26,7 +25,7 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 	setMinimumSize(620, 560);
 	resize(700, 600);
 
-	net       = new QNetworkAccessManager(this);
+	net        = new QNetworkAccessManager(this);
 	emotionNet = new QNetworkAccessManager(this);
 
 	systemPrompt =
@@ -41,19 +40,13 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 		"things. NEVER use asterisks for actions or mannerisms like *tail flick* or *purrs*. "
 		"a stray mrrp is fine but keep it minimal. keep it short.";
 
-	connect(net,       &QNetworkAccessManager::finished,
-	        this,      &OBSGroqChat::OnReply);
-	connect(emotionNet, &QNetworkAccessManager::finished,
-	        this,       &OBSGroqChat::OnEmotionReply);
+	connect(net,        &QNetworkAccessManager::finished, this, &OBSGroqChat::OnReply);
+	connect(emotionNet, &QNetworkAccessManager::finished, this, &OBSGroqChat::OnEmotionReply);
 
-	// -----------------------------------------------------------------------
-	// Root layout
-	// -----------------------------------------------------------------------
+	// ── Layout ──────────────────────────────────────────────────────────────
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-	// -----------------------------------------------------------------------
-	// API key row (unchanged functionality, cat-flavoured text)
-	// -----------------------------------------------------------------------
+	// API key group
 	QGroupBox   *keyGroup  = new QGroupBox(tr("Groq API Key"));
 	QVBoxLayout *keyLayout = new QVBoxLayout(keyGroup);
 	QHBoxLayout *keyRow    = new QHBoxLayout();
@@ -71,21 +64,11 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 	keyHint->setWordWrap(true);
 	keyHint->setStyleSheet("font-size: 11px; color: #888;");
 	keyLayout->addWidget(keyHint);
-
-	LoadApiKey();
-	SetApiKeyState();
-
-	connect(saveKeyBtn, &QPushButton::clicked,       this, &OBSGroqChat::SaveApiKey);
-	connect(apiKeyInput, &QLineEdit::textChanged,    this, &OBSGroqChat::SetApiKeyState);
-
 	mainLayout->addWidget(keyGroup);
 
-	// -----------------------------------------------------------------------
-	// Split layout: cat panel (left) | chat panel (right)
-	// -----------------------------------------------------------------------
+	// Cat panel + chat history
 	QHBoxLayout *splitLayout = new QHBoxLayout();
 
-	// --- Left: cat image + emotion label ---
 	QVBoxLayout *catPanel = new QVBoxLayout();
 	catPanel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
@@ -100,28 +83,23 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 	nameLabel->setAlignment(Qt::AlignCenter);
 	nameLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
 	catPanel->addWidget(nameLabel);
-
 	catPanel->addStretch();
 	splitLayout->addLayout(catPanel);
 
-	// Load the default emotion image
+	// currentEmotion is initialised to "curious" in the header,
+	// so this call will find the right image from the start.
 	SetCatEmotion(currentEmotion);
 
-	// --- Right: chat history ---
 	chatHistory = new QTextBrowser();
 	chatHistory->setReadOnly(true);
 	chatHistory->setOpenExternalLinks(false);
 	chatHistory->setPlaceholderText(
 		tr("mrrp. ask me about OBS. or don't. i'll be here either way."));
 	splitLayout->addWidget(chatHistory, 1);
-
 	mainLayout->addLayout(splitLayout, 1);
 
-	// -----------------------------------------------------------------------
 	// Input row
-	// -----------------------------------------------------------------------
 	QHBoxLayout *inputRow = new QHBoxLayout();
-
 	messageInput = new QLineEdit();
 	messageInput->setPlaceholderText(tr("Type a message..."));
 	inputRow->addWidget(messageInput, 1);
@@ -129,18 +107,22 @@ OBSGroqChat::OBSGroqChat(QWidget *parent) : QDialog(parent)
 	sendButton = new QPushButton(tr("Send"));
 	sendButton->setEnabled(false);
 	inputRow->addWidget(sendButton);
-
 	mainLayout->addLayout(inputRow);
 
-	connect(sendButton,   &QPushButton::clicked,       this, &OBSGroqChat::SendChatMessage);
-	connect(messageInput, &QLineEdit::returnPressed,   this, &OBSGroqChat::SendChatMessage);
+	// ── Connections ─────────────────────────────────────────────────────────
+	connect(sendButton,   &QPushButton::clicked,     this, &OBSGroqChat::SendChatMessage);
+	connect(messageInput, &QLineEdit::returnPressed, this, &OBSGroqChat::SendChatMessage);
+	connect(saveKeyBtn,   &QPushButton::clicked,     this, &OBSGroqChat::SaveApiKey);
+	connect(apiKeyInput,  &QLineEdit::textChanged,   this, &OBSGroqChat::SetApiKeyState);
+
+	LoadApiKey();
+	SetApiKeyState();
 }
 
 OBSGroqChat::~OBSGroqChat() {}
 
-// ---------------------------------------------------------------------------
-// Config
-// ---------------------------------------------------------------------------
+// ── API key ──────────────────────────────────────────────────────────────────
+
 void OBSGroqChat::LoadApiKey()
 {
 	const char *key = config_get_string(App()->GetUserConfig(), "GroqChat", "ApiKey");
@@ -161,36 +143,24 @@ void OBSGroqChat::SetApiKeyState()
 	sendButton->setEnabled(!apiKeyInput->text().trimmed().isEmpty());
 }
 
-// ---------------------------------------------------------------------------
-// Cat emotion display
-// Expected PNG filenames (in your Qt resource file or cat_images/ folder):
-//   happy.png  grumpy.png  sleepy.png  sad.png  curious.png  weary.png
-// ---------------------------------------------------------------------------
+// ── Cat image ────────────────────────────────────────────────────────────────
+
 void OBSGroqChat::SetCatEmotion(const QString &emotion)
 {
 	currentEmotion = emotion;
 
-	// Try Qt resource system first (:/catbot/<emotion>.png),
-	// then fall back to a relative path next to the binary.
-	QString resourcePath = QString(":/catbot/%1.jpg").arg(emotion);
-	QString fallbackPath  = QString("cat_images/%1.jpg").arg(emotion);
-
 	QPixmap px;
-	if (!px.load(resourcePath))
-		px.load(fallbackPath);
+	if (!px.load(QString(":/catbot/%1.jpg").arg(emotion)))
+		px.load(QString("cat_images/%1.jpg").arg(emotion));
 
-	if (!px.isNull()) {
+	if (!px.isNull())
 		catImageLabel->setPixmap(px);
-	} else {
-		// No image found — show a text placeholder so the layout doesn't collapse
+	else
 		catImageLabel->setText(QString("[ %1 ]").arg(emotion));
-	}
-
 }
 
-// ---------------------------------------------------------------------------
-// Send chat message
-// ---------------------------------------------------------------------------
+// ── Chat ─────────────────────────────────────────────────────────────────────
+
 void OBSGroqChat::SendChatMessage()
 {
 	QString msg = messageInput->text().trimmed();
@@ -202,13 +172,15 @@ void OBSGroqChat::SendChatMessage()
 		return;
 
 	history.append({"user", msg});
+	if (history.size() > maxHistory)
+		history = history.mid(history.size() - maxHistory);
+
 	chatHistory->append(QString("<p><b>You:</b> %1</p>").arg(msg.toHtmlEscaped()));
 	messageInput->clear();
 	sendButton->setEnabled(false);
 
-	// Build messages array, prepending the system prompt
-	QJsonArray messages;
-
+	// Build request
+	QJsonArray  messages;
 	QJsonObject sysMsg;
 	sysMsg["role"]    = "system";
 	sysMsg["content"] = systemPrompt;
@@ -231,18 +203,16 @@ void OBSGroqChat::SendChatMessage()
 	net->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
 }
 
-// ---------------------------------------------------------------------------
-// Handle chat reply
-// ---------------------------------------------------------------------------
 void OBSGroqChat::OnReply(QNetworkReply *reply)
 {
 	reply->deleteLater();
 
 	if (reply->error() != QNetworkReply::NoError) {
 		chatHistory->append(QString("<p style='color:red'><b>Error:</b> %1</p>")
-				    .arg(reply->errorString().toHtmlEscaped()));
-		history.removeLast();
-		sendButton->setEnabled(true);
+		                    .arg(reply->errorString().toHtmlEscaped()));
+		if (!history.isEmpty())
+			history.removeLast();
+		SetApiKeyState(); // restore button state correctly
 		return;
 	}
 
@@ -251,8 +221,9 @@ void OBSGroqChat::OnReply(QNetworkReply *reply)
 
 	if (doc.isNull() || !doc.isObject()) {
 		chatHistory->append("<p style='color:red'><b>Error:</b> Invalid response from API.</p>");
-		history.removeLast();
-		sendButton->setEnabled(true);
+		if (!history.isEmpty())
+			history.removeLast();
+		SetApiKeyState();
 		return;
 	}
 
@@ -261,43 +232,48 @@ void OBSGroqChat::OnReply(QNetworkReply *reply)
 	if (obj.contains("error")) {
 		QJsonObject err = obj["error"].toObject();
 		chatHistory->append(QString("<p style='color:red'><b>API Error:</b> %1</p>")
-				    .arg(err["message"].toString().toHtmlEscaped()));
-		history.removeLast();
-		sendButton->setEnabled(true);
+		                    .arg(err["message"].toString().toHtmlEscaped()));
+		if (!history.isEmpty())
+			history.removeLast();
+		SetApiKeyState();
 		return;
 	}
 
 	QJsonArray choices = obj["choices"].toArray();
 	if (choices.isEmpty()) {
 		chatHistory->append("<p style='color:red'><b>Error:</b> No response choices returned.</p>");
-		history.removeLast();
-		sendButton->setEnabled(true);
+		if (!history.isEmpty())
+			history.removeLast();
+		SetApiKeyState();
 		return;
 	}
 
 	QString replyText = choices[0].toObject()["message"].toObject()["content"].toString();
 	history.append({"assistant", replyText});
+	if (history.size() > maxHistory)
+		history = history.mid(history.size() - maxHistory);
 
 	chatHistory->append(QString("<p><b>🐱 CatBot:</b> %1</p>")
-			    .arg(replyText.toHtmlEscaped().replace("\n", "<br>")));
+	                    .arg(replyText.toHtmlEscaped().replace("\n", "<br>")));
 
-	sendButton->setEnabled(true);
-
-	// Fire off the emotion detection call now that we have the reply
+	SetApiKeyState(); // respects key state rather than blindly re-enabling
 	DetectEmotion(replyText);
 }
 
-// ---------------------------------------------------------------------------
-// Emotion detection — sends a tiny separate request
-// ---------------------------------------------------------------------------
+// ── Emotion detection ────────────────────────────────────────────────────────
+
 void OBSGroqChat::DetectEmotion(const QString &text)
 {
 	QString key = apiKeyInput->text().trimmed();
 	if (key.isEmpty())
 		return;
 
-	// Ask the model to classify in a single lowercase word.
-	// The fixed set keeps parsing trivial and prevents hallucinated tokens.
+	// Cancel any in-flight emotion request so replies don't race
+	if (pendingEmotionReply) {
+		pendingEmotionReply->abort();
+		pendingEmotionReply = nullptr;
+	}
+
 	QString prompt =
 		"Classify the mood of the following text as exactly one lowercase word "
 		"chosen from this list: angry, weary, sleepy, sad, curious.\n"
@@ -306,7 +282,7 @@ void OBSGroqChat::DetectEmotion(const QString &text)
 
 	QJsonObject body;
 	body["model"]      = "llama3-70b-8192";
-	body["max_tokens"] = 5;
+	body["max_tokens"] = 10; // bumped from 5 — avoids truncation on leading whitespace tokens
 	body["messages"]   = QJsonArray{
 		QJsonObject{{"role", "user"}, {"content", prompt}}
 	};
@@ -314,17 +290,16 @@ void OBSGroqChat::DetectEmotion(const QString &text)
 	QNetworkRequest req{QUrl(groqUrl)};
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	req.setRawHeader("Authorization", QString("Bearer %1").arg(key).toUtf8());
-	emotionNet->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
+
+	pendingEmotionReply = emotionNet->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
 }
 
-// ---------------------------------------------------------------------------
-// Handle emotion reply
-// ---------------------------------------------------------------------------
 void OBSGroqChat::OnEmotionReply(QNetworkReply *reply)
 {
 	reply->deleteLater();
+	pendingEmotionReply = nullptr;
 
-	// Emotion detection is best-effort — silently ignore errors
+	// Aborted replies (from cancellation) are silently ignored
 	if (reply->error() != QNetworkReply::NoError)
 		return;
 
@@ -337,19 +312,12 @@ void OBSGroqChat::OnEmotionReply(QNetworkReply *reply)
 	if (choices.isEmpty())
 		return;
 
-	// Sanitise: lowercase, strip whitespace/punctuation
 	QString raw = choices[0].toObject()["message"].toObject()["content"]
 	                  .toString()
 	                  .toLower()
 	                  .trimmed();
-	// Remove any stray punctuation the model might have added
 	raw.remove(QRegularExpression("[^a-z]"));
 
-	// Validate against our allowed set; fall back to "weary"
-	static const QStringList valid = {
-		"angry", "weary", "sleepy", "sad", "curious"
-	};
-	QString emotion = valid.contains(raw) ? raw : "weary";
-
-	SetCatEmotion(emotion);
+	static const QStringList valid = {"angry", "weary", "sleepy", "sad", "curious"};
+	SetCatEmotion(valid.contains(raw) ? raw : "weary");
 }
