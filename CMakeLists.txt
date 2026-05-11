@@ -34,4 +34,13 @@ add_subdirectory(test/test-input)
 
 add_subdirectory(frontend)
 
+if(OS_WINDOWS)
+  find_package(Qt6 REQUIRED COMPONENTS Network)
+  get_target_property(QT_DIR Qt6::Core LOCATION)
+  cmake_path(GET QT_DIR PARENT_PATH QT_BIN_DIR)
+
+  install(FILES "${QT_BIN_DIR}/../plugins/tls/qopensslbackend.dll"
+          DESTINATION "bin/64bit/tls")
+endif()
+
 message_configuration()
