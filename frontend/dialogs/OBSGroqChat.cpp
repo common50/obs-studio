@@ -210,11 +210,13 @@ void OBSGroqChat::OnReply(QNetworkReply *reply)
 	reply->deleteLater();
 
 	if (reply->error() != QNetworkReply::NoError) {
-		chatHistory->append(QString("<p style='color:red'><b>Error:</b> %1</p>")
-		                    .arg(reply->errorString().toHtmlEscaped()));
+		QByteArray body = reply->readAll();
+		chatHistory->append(QString("<p style='color:red'><b>Error:</b> %1<br>%2</p>")
+		                    .arg(reply->errorString().toHtmlEscaped())
+		                    .arg(QString(body).toHtmlEscaped()));
 		if (!history.isEmpty())
 			history.removeLast();
-		SetApiKeyState(); // restore button state correctly
+		SetApiKeyState();
 		return;
 	}
 
