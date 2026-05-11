@@ -196,9 +196,9 @@ void OBSGroqChat::SendChatMessage()
 	}
 
 	QJsonObject body;
-	body["model"]    = "llama3-70b-8192";
-	body["messages"] = messages;
+	body["model"]    = "llama-3.1-8b-instant";
 
+	body["messages"] = messages;
 	QNetworkRequest req{QUrl(groqUrl)};
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	req.setRawHeader("Authorization", QString("Bearer %1").arg(key).toUtf8());
@@ -285,7 +285,7 @@ void OBSGroqChat::DetectEmotion(const QString &text)
 		"Text:\n" + text;
 
 	QJsonObject body;
-	body["model"]      = "llama3-70b-8192";
+	body["model"]      = "llama-3.1-8b-instant";
 	body["max_tokens"] = 10; // bumped from 5 — avoids truncation on leading whitespace tokens
 	body["messages"]   = QJsonArray{
 		QJsonObject{{"role", "user"}, {"content", prompt}}
